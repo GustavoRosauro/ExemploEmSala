@@ -21,20 +21,7 @@ namespace ExercicioCrudWinForms.Model
             string query = @"INSERT INTO PRODUTOS (DESCRICAO,DATA_INSERCAO) VALUES (@descricao,GETDATE())";
             var conn = conexao.Conexao();
             conn.Open();
-            SqlCommand cmd = new SqlCommand(query,conn);
-            cmd.Parameters.AddWithValue("@descricao",descricao);
-            try
-            {
-                cmd.ExecuteNonQuery();
-            }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-            finally
-            {
-                conn.Close();
-            }
+            CareConnectionParameters(query,conn,descricao);
         }
         public List<Produtos> BuscaProdutos()
         {
@@ -68,12 +55,23 @@ namespace ExercicioCrudWinForms.Model
             string query = @"DELETE FROM PRODUTOS WHERE ID = " +id;
             var conn = conexao.Conexao();
             conn.Open();
-            SqlCommand cmd = new SqlCommand(query,conn);
+            CareConnection(query,conn);
+        }
+        public void AtualizaRegistro(int id, string descricao)
+        {
+            string query = @"UPDATE PRODUTOS SET DESCRICAO = @descricao WHERE ID  = "+id;
+            var conn = conexao.Conexao();
+            conn.Open();
+            CareConnectionParameters(query,conn,descricao);
+        }
+        private void CareConnection(string query, SqlConnection conn)
+        {
+            SqlCommand cmd = new SqlCommand(query, conn);
             try
             {
                 cmd.ExecuteNonQuery();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -82,18 +80,15 @@ namespace ExercicioCrudWinForms.Model
                 conn.Close();
             }
         }
-        public void AtualizaRegistro(int id, string descricao)
+        private void CareConnectionParameters(string query, SqlConnection conn, string descricao)
         {
-            string query = @"UPDATE PRODUTOS SET DESCRICAO = @descricao WHERE ID  = "+id;
-            var conn = conexao.Conexao();
-            conn.Open();
-            SqlCommand cmd = new SqlCommand(query,conn);
-            cmd.Parameters.AddWithValue("@descricao",descricao);
+            SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@descricao", descricao);
             try
             {
                 cmd.ExecuteNonQuery();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
